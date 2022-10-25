@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\pre_entrega.csproj": {}
+    "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\pre_entrega.csproj": {}
   },
   "projects": {
-    "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\pre_entrega.csproj": {
+    "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\pre_entrega.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
+        "projectUniqueName": "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
         "projectName": "pre_entrega",
-        "projectPath": "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
+        "projectPath": "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
         "packagesPath": "C:\\Users\\PUESTO 02\\.nuget\\packages\\",
-        "outputPath": "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\obj\\",
+        "outputPath": "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\PUESTO 02\\AppData\\Roaming\\NuGet\\NuGet.Config",

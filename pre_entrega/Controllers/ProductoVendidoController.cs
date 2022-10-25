@@ -17,7 +17,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ProductoVendido>> ObtenerProductosVendidos(int idUsuario)
+        public ActionResult<List<ProductoVendido>> ObtenerProductosVendidos([FromBody] int idUsuario)
         {
             try
             {

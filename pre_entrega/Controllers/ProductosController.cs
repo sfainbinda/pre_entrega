@@ -17,7 +17,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Producto>> ObtenerProductos(int idUsuario)
+        public ActionResult<List<Producto>> ObtenerProductos([FromBody]int idUsuario)
         {
             try
             {
@@ -27,6 +27,24 @@ namespace pre_entrega.Controllers
             {
                 throw;
             }
+        }
+
+        [HttpPost]
+        public ActionResult<Producto> Agregar([FromBody] Producto producto)
+        {
+            return producto;
+        }
+
+        [HttpPut]
+        public ActionResult<Producto> Modificar([FromBody] Producto producto)
+        {
+            return producto;
+        }
+
+        [HttpDelete]
+        public ActionResult<bool> Eliminar([FromBody] int id)
+        {
+            return true;
         }
     }
 }

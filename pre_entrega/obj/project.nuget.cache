@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eYAuboUBWVVS47ykXyLbD3sHcbyZN3MV4/yo5jjUUAoaPASPrcNOOMGz1JJczcNHm6WJf7eZtgQVKUo8bthpaw==",
+  "dgSpecHash": "Ob0nbtMlTEaTstbzZPH07T3Ud3WZ3a5EUUrd7HX0E/7mPMmHCS0B9xF1lrnh+QdNp2rQcOC0/v/MKB09YwUxCw==",
   "success": true,
-  "projectFilePath": "C:\\sfainbinda\\ch\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
+  "projectFilePath": "C:\\sfainbinda\\git\\pre_entrega\\pre_entrega\\pre_entrega.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\PUESTO 02\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\PUESTO 02\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",

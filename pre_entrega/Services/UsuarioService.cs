@@ -12,6 +12,37 @@ namespace pre_entrega.Services
             repositorio = new UsuarioRepository();
         }
 
+        public string Guardar (Usuario usuario)
+        {
+            try
+            {
+                if (usuario.Id != 0)
+                {
+                    return repositorio.Modificar(usuario);
+                }
+                else
+                {
+                    return repositorio.Agregar(usuario);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        } 
+
+        public Usuario ObtenerPorId (int id)
+        {
+            try
+            {
+                return repositorio.ObtenerPorId(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public Usuario ObtenerPorNombreUsuario(string nombreUsuario)
         {
             try
