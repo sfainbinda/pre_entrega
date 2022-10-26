@@ -17,7 +17,33 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Producto>> ObtenerProductos([FromBody]int idUsuario)
+        public ActionResult<List<Producto>> ObtenerTodos()
+        {
+            try
+            {
+                return servicio.ObtenerTodos();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("id")]
+        public ActionResult<Producto> ObtenerPorId ([FromQuery] int id)
+        {
+            try
+            {
+                return servicio.ObtenerPorId(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("idUsuario")]
+        public ActionResult<List<Producto>> ObtenerPorIdUsuario([FromQuery]int idUsuario)
         {
             try
             {
@@ -30,21 +56,27 @@ namespace pre_entrega.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Producto> Agregar([FromBody] Producto producto)
+        public ActionResult<string> Agregar([FromBody] Producto producto)
         {
-            return producto;
+            bool valido = false;
+            if (ModelState.IsValid)
+            {
+                valido = true;
+            }
+
+            return Ok(servicio.Guardar(producto));
         }
 
         [HttpPut]
-        public ActionResult<Producto> Modificar([FromBody] Producto producto)
+        public ActionResult<string> Modificar([FromBody] Producto producto)
         {
-            return producto;
+            return Ok(servicio.Guardar(producto));
         }
 
-        [HttpDelete]
-        public ActionResult<bool> Eliminar([FromBody] int id)
+        [HttpDelete("id")]
+        public ActionResult<string> Eliminar([FromQuery] int id)
         {
-            return true;
+            return Ok(servicio.Eliminar(id));
         }
     }
 }

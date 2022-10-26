@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace pre_entrega.Models
 {

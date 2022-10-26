@@ -14,6 +14,18 @@ namespace pre_entrega.Services
             productoServicio = new ProductoService();
         }
 
+        public bool EliminarPorProductoId (int idProducto)
+        {
+            try
+            {
+                return repositorio.EliminarPorProductoId(idProducto);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public List<ProductoVendido> ObtenerPorUsuarioId(int idUsuario)
         {
             try

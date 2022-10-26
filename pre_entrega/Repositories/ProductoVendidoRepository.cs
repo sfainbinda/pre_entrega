@@ -14,6 +14,33 @@ namespace pre_entrega.Repositories
             gestorDeConexion = new GestorDeConexion();
         }
 
+        public bool EliminarPorProductoId (int idProducto)
+        {
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                conexion.Open();
+
+                var id = new SqlParameter()
+                {
+                    ParameterName = "IdProducto",
+                    SqlDbType = SqlDbType.Int,
+                    Value = idProducto,
+                };
+
+                string consulta =
+                    @"DELETE FROM ProductoVendido
+                    WHERE IdProducto = @Id";
+
+                SqlCommand comando = new SqlCommand(consulta, conexion);
+                comando.Parameters.Add(id);
+                comando.ExecuteNonQuery();
+
+                conexion.Close();
+            }
+            return true;
+        }
+
         public List<ProductoVendido> ObtenerPorProductoId(int idProducto)
         {
             List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
