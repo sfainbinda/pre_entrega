@@ -12,17 +12,17 @@ namespace pre_entrega.Services
             repositorio = new UsuarioRepository();
         }
 
-        public string Guardar (Usuario usuario)
+        public int Guardar (Usuario entidad)
         {
             try
             {
-                if (usuario.Id != 0)
+                if (entidad.Id == 0)
                 {
-                    return repositorio.Modificar(usuario);
+                    return repositorio.Crear(entidad);
                 }
                 else
                 {
-                    return repositorio.Agregar(usuario);
+                    return repositorio.Modificar(entidad);
                 }
             }
             catch (Exception)

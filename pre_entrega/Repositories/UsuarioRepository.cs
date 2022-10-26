@@ -14,229 +14,122 @@ namespace pre_entrega.Repository
             gestorDeConexion = new GestorDeConexion();
         }
 
-        public string Agregar (Usuario usuario)
+        public int Crear (Usuario entidad)
         {
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-
                 string consulta =
                     @"INSERT INTO Usuario
-                    VALUES
-                    (@Nombre, @Apellido, @NombreUsuario, @Contrasenia, @Mail)";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
+                    VALUES (@Nombre, @Apellido, @NombreUsuario, @Contrasenia, @Mail)
+                    SELECT SCOPE_IDENTITY();"; // SCOPE_IDENTITY recupera el último id insertado en la tabla.
                 
-                var nombre = new SqlParameter()
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Nombre",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Nombre,
-                };
-
-                var apellido = new SqlParameter()
-                {
-                    ParameterName = "Apellido",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Apellido,
-                };
-
-                var nombreUsuario = new SqlParameter()
-                {
-                    ParameterName = "NombreUsuario",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.NombreUsuario,
-                };
-
-                var contrasenia = new SqlParameter()
-                {
-                    ParameterName = "Contrasenia",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Contrasenia,
-                };
-
-                var mail = new SqlParameter()
-                {
-                    ParameterName = "Mail",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Mail,
-                };
-
-                var id = new SqlParameter()
-                {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = usuario.Id,
-                };
-
-                comando.Parameters.Add(nombre);
-                comando.Parameters.Add(apellido);
-                comando.Parameters.Add(nombreUsuario);
-                comando.Parameters.Add(contrasenia);
-                comando.Parameters.Add(mail);
-
-                comando.ExecuteNonQuery();
-                conexion.Close();
+                    comando.Parameters.AddWithValue("Nombre", entidad.Nombre);
+                    comando.Parameters.AddWithValue("Apellido", entidad.Apellido);
+                    comando.Parameters.AddWithValue("NombreUsuario", entidad.NombreUsuario);
+                    comando.Parameters.AddWithValue("Contrasenia", entidad.Contrasenia);
+                    comando.Parameters.AddWithValue("Mail", entidad.Mail);
+                    
+                    conexion.Open();
+                    // ExecuteScalar retorna el valor de la primer columna de la primera fila del resultado devuelto por la consulta.
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    entidad.Id = respuesta;
+                    conexion.Close();
+                }
             }
-            return "Usuario creado.";
+            return respuesta;
         }
 
-        public string Modificar (Usuario usuario)
+        public int Modificar (Usuario entidad)
         {
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-
                 string consulta =
                     @"UPDATE Usuario
                     SET Nombre = @Nombre, Apellido = @Apellido, NombreUsuario = @NombreUsuario, Contraseña = @Contrasenia, Mail = @Mail
-                    WHERE Id = @Id";
+                    WHERE Id = @Id;";
+                conexion.Open();
 
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-
-                var nombre = new SqlParameter()
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Nombre",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Nombre,
-                };
-
-                var apellido = new SqlParameter()
-                {
-                    ParameterName = "Apellido",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Apellido,
-                };
-
-                var nombreUsuario = new SqlParameter()
-                {
-                    ParameterName = "NombreUsuario",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.NombreUsuario,
-                };
-
-                var contrasenia = new SqlParameter()
-                {
-                    ParameterName = "Contrasenia",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Contrasenia,
-                };
-
-                var mail = new SqlParameter()
-                {
-                    ParameterName = "Mail",
-                    SqlDbType = SqlDbType.Char,
-                    Value = usuario.Mail,
-                };
-
-                var id = new SqlParameter()
-                {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = usuario.Id,
-                };
-
-                comando.Parameters.Add(nombre);
-                comando.Parameters.Add(apellido);
-                comando.Parameters.Add(nombreUsuario);
-                comando.Parameters.Add(contrasenia);
-                comando.Parameters.Add(mail);
-                comando.Parameters.Add(id);
-
-                comando.ExecuteNonQuery();
-                conexion.Close();
+                    comando.Parameters.AddWithValue("Id", entidad.Id);
+                    comando.Parameters.AddWithValue("Nombre", entidad.Nombre);
+                    comando.Parameters.AddWithValue("Apellido", entidad.Apellido);
+                    comando.Parameters.AddWithValue("NombreUsuario", entidad.NombreUsuario);
+                    comando.Parameters.AddWithValue("Contrasenia", entidad.Contrasenia);
+                    comando.Parameters.AddWithValue("Mail", entidad.Mail);
+                    
+                    conexion.Open();
+                    comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
             }
-            return "Usuario modificado.";
+            return respuesta;
         }
 
         public Usuario ObtenerPorId (int id)
         {
-            Usuario usuario = new Usuario();
+            Usuario usuario = null;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM Usuario WHERE Id = @Id;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = id,
-                };
-
-                string consulta =
-                    @"SELECT * 
-                    FROM Usuario 
-                    WHERE Id = @Id;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    // Otra manera de resolver la carga de parámetros.
+                    comando.Parameters.Add("Id", SqlDbType.Int).Value = id;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        usuario = new Usuario
                         {
-                            Usuario auxiliar = new Usuario()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Nombre = dr.GetString(1),
-                                Apellido = dr.GetString(2),
-                                NombreUsuario = dr.GetString(3),
-                                Contrasenia = dr.GetString(4),
-                                Mail = dr.GetString(5),
-                            };
-                            usuario = auxiliar;
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Nombre = lector.GetString(1),
+                            Apellido = lector.GetString(2),
+                            NombreUsuario = lector.GetString(3),
+                            Contrasenia = lector.GetString(4),
+                            Mail = lector.GetString(5),
+                        };
                     }
+                    conexion.Close();
                 }
-                conexion.Close();
             }
             return usuario;
         }
 
         public Usuario ObtenerPorNombreUsuario (string nombreUsuario)
         {
-            Usuario usuario = new Usuario();
+            Usuario usuario = null;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM Usuario WHERE NombreUsuario = @NombreUsuario;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "NombreUsuario",
-                    SqlDbType = SqlDbType.Char,
-                    Value = nombreUsuario,
-                };
-
-                string consulta =
-                    @"SELECT * 
-                    FROM Usuario 
-                    WHERE NombreUsuario = @NombreUsuario;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    // Otra manera de resolver la carga de parámetros.
+                    comando.Parameters.Add("NombreUsuario", SqlDbType.Char).Value = nombreUsuario;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        usuario = new Usuario
                         {
-                            Usuario auxiliar = new Usuario()
-                            {
-                                Id = (int) dr.GetInt64(0),
-                                Nombre = dr.GetString(1),
-                                Apellido = dr.GetString(2),
-                                NombreUsuario = dr.GetString(3),
-                                Contrasenia = dr.GetString(4),
-                                Mail = dr.GetString(5),
-                            };
-                            usuario = auxiliar;
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Nombre = lector.GetString(1),
+                            Apellido = lector.GetString(2),
+                            NombreUsuario = lector.GetString(3),
+                            Contrasenia = lector.GetString(4),
+                            Mail = lector.GetString(5),
+                        };
                     }
+                    conexion.Close();
                 }
-                conexion.Close();
             }
             return usuario;
         }

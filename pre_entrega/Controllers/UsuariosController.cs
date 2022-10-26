@@ -31,11 +31,12 @@ namespace pre_entrega.Controllers
         }
 
         [HttpPost]
-        public ActionResult<string> Agregar ([FromBody] Usuario usuario)
+        public ActionResult<Usuario> Crear ([FromBody] Usuario entidad)
         {
             try
             {
-                return Ok(servicio.Guardar(usuario));
+                servicio.Guardar(entidad);
+                return servicio.ObtenerPorId(entidad.Id);
             }
 
             catch (Exception)
@@ -45,11 +46,11 @@ namespace pre_entrega.Controllers
         }
 
         [HttpPut]
-        public ActionResult<string> Modificar([FromBody] Usuario usuario)
+        public ActionResult<int> Modificar([FromBody] Usuario entidad)
         {
             try
             {
-                return Ok(servicio.Guardar(usuario));
+                return servicio.Guardar(entidad);
             }
             catch (Exception)
             {
