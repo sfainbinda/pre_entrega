@@ -134,7 +134,7 @@ namespace pre_entrega.Repositories
                 {
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         Producto producto = new Producto()
                         {
@@ -166,7 +166,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.Add("IdUsuario", SqlDbType.Int).Value = idUsuario;
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         Producto producto = new Producto()
                         {

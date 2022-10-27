@@ -7,12 +7,10 @@ namespace pre_entrega.Services
     public class ProductoService
     {
         private readonly ProductoRepository repositorio;
-        private readonly ProductoVendidoService productoVendidoServicio;
 
         public ProductoService()
         {
             repositorio = new ProductoRepository();
-            productoVendidoServicio = new ProductoVendidoService();
         }
 
         public int Eliminar (int id)

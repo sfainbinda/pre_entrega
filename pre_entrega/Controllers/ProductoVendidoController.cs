@@ -31,8 +31,8 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("[controller]/producto/{id}")]
-        public ActionResult<ProductoVendido> ObtenerPorProductoId(int id)
+        [HttpGet("producto/{id}")]
+        public ActionResult<List<ProductoVendido>> ObtenerPorProductoId(int id)
         {
             try
             {
@@ -44,8 +44,21 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("[controller]/venta/{id}")]
-        public ActionResult<ProductoVendido> ObtenerPorVentaId(int id)
+        [HttpGet("usuario/{id}")]
+        public ActionResult<List<ProductoVendido>> ObtenerPorUsuarioId(int id)
+        {
+            try
+            {
+                return Ok(servicio.ObtenerPorUsuarioId(id));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("venta/{id}")]
+        public ActionResult<List<ProductoVendido>> ObtenerPorVentaId(int id)
         {
             try
             {

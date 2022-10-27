@@ -8,10 +8,12 @@ namespace pre_entrega.Services
     public class ProductoVendidoService
     {
         private readonly ProductoVendidoRepository repositorio;
+        private readonly ProductoService productoServicio;
 
         public ProductoVendidoService()
         {
             repositorio = new ProductoVendidoRepository();
+            productoServicio = new ProductoService();
         }
 
         public int Guardar (ProductoVendido entidad)
@@ -43,6 +45,29 @@ namespace pre_entrega.Services
             try
             {
                 return repositorio.ObtenerPorProductoId(idProducto);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<ProductoVendido> ObtenerPorUsuarioId (int idUsuario)
+        {
+            try
+            {
+                List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
+                var productos = productoServicio.ObtenerPorUsuarioId(idUsuario);
+                foreach (var producto in productos)
+                {
+                    var parcial = repositorio.ObtenerPorProductoId(producto.Id);
+                    foreach (var item in parcial)
+                    {
+                        item.Producto = producto;
+                        productosVendidos.Add(item);
+                    }
+                }
+                return productosVendidos;
             }
             catch (Exception)
             {

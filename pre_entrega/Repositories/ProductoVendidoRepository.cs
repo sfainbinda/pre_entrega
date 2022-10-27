@@ -81,7 +81,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.Add("IdProducto", SqlDbType.Int).Value = idProducto;
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         ProductoVendido productoVendido = new ProductoVendido
                         {
@@ -111,7 +111,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.Add("IdVenta", SqlDbType.Int).Value = idVenta;
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         ProductoVendido productoVendido = new ProductoVendido
                         {
