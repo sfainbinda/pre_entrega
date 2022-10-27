@@ -1,4 +1,6 @@
-﻿namespace pre_entrega.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace pre_entrega.Models
 {
     public class Venta
     {
@@ -9,17 +11,15 @@
         #endregion
 
         #region Properties
+        [Required]
         public int Id { get { return _id; } set { _id = value; } }
         public string Comentarios { get { return _comentarios; } set { _comentarios = value; } }
+        [Required]
         public int IdUsuario { get { return _idUsuario; } set { _idUsuario = value; } }
-        public List<ProductoVendido> ProductosVendidos { get; set; }
         #endregion
 
         #region Constructors
-        public Venta()
-        {
-
-        }
+        public Venta() { }
 
         public Venta(int id, string comentarios, int idUsuario)
         {

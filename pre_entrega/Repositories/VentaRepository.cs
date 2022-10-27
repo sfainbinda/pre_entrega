@@ -14,46 +14,160 @@ namespace pre_entrega.Repositories
             gestorDeConexion = new GestorDeConexion();
         }
 
-        public List<Venta> ObtenerPorUsuarioId(int idUsuario)
+        public int Crear (Venta entidad)
         {
-            List<Venta> ventas = new List<Venta>();
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
-                {
-                    ParameterName = "IdUsuario",
-                    SqlDbType = SqlDbType.Int,
-                    Value = idUsuario,
-                };
-
                 string consulta =
-                    @"SELECT * 
-                    FROM Venta 
-                    WHERE IdUsuario = @IdUsuario;";
+                    @"INSERT INTO Venta
+                    (Comentarios, IdUsuario)
+                    VALUES (@Comentarios, @IdUsuario);";
 
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    if (dr.HasRows)
-                    {
-                        while (dr.Read())
-                        {
-                            Venta venta = new Venta()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Comentarios = dr.GetString(1),
-                                IdUsuario = (int)dr.GetInt64(2),
-                            };
-                            ventas.Add(venta);
-                        }
-                    }
+                    comando.Parameters.AddWithValue("Comentarios", entidad.Comentarios);
+                    comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
+
+                    conexion.Open();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
                 }
-                conexion.Close();
+            }
+            return respuesta;
+        }
+
+        public int Eliminar(int id)
+        {
+            int respuesta = -1;
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "DELETE FROM Venta WHERE Id = @Id;";
+
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("Id", id);
+
+                    conexion.Open();
+                    respuesta = comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
+            }
+            return respuesta;
+        }
+
+        public int Modificar(Venta entidad)
+        {
+            int respuesta = -1;
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta =
+                    @"UPDATE Venta
+                    SET Comentarios = @Comentarios, IdUsuario = @IdUsuario
+                    WHERE Id = @Id;";
+
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("Id", entidad.Id);
+                    comando.Parameters.AddWithValue("Comentarios", entidad.Comentarios);
+                    comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
+
+                    conexion.Open();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
+                }
+            }
+            return respuesta;
+        }
+
+        public Venta ObtenerPorId(int id)
+        {
+            Venta venta = null;
+
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "SELECT * FROM Venta WHERE Id = @Id;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.Add("Id", SqlDbType.Int).Value = id;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
+                    {
+                        venta = new Venta()
+                        {
+                            Id = (int)lector.GetInt64(0),
+                            Comentarios = lector.GetString(1),
+                            IdUsuario = (int)lector.GetInt64(2),
+                        };
+                    }
+                    conexion.Close();
+                }
+            }
+            return venta;
+        }
+
+        public List<Venta> ObtenerTodos()
+        {
+            List<Venta> ventas = new List<Venta>();
+
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "SELECT * FROM Venta;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
+                    {
+                        Venta venta = new Venta()
+                        {
+                            Id = (int)lector.GetInt64(0),
+                            Comentarios = lector.GetString(1),
+                            IdUsuario = (int)lector.GetInt64(2),
+                        };
+                        ventas.Add(venta);
+                    }
+                    conexion.Close();
+                }
             }
             return ventas;
         }
+
+        public List<Venta> ObtenerPorUsuarioId(int idUsuario)
+        {
+            List<Venta> ventas = new List<Venta>();
+
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "SELECT * FROM Venta WHERE IdUsuario = @IdUsuario;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.Add("IdUsuario", SqlDbType.Int).Value = idUsuario;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
+                    {
+                        Venta venta = new Venta()
+                        {
+                            Id = (int)lector.GetInt64(0),
+                            Comentarios = lector.GetString(1),
+                            IdUsuario = (int)lector.GetInt64(2),
+                        };
+                        ventas.Add(venta);
+                    }
+                    conexion.Close();
+                }
+            }
+            return ventas;
+        }
+
+
     }
 }
