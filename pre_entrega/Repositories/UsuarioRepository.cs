@@ -43,6 +43,25 @@ namespace pre_entrega.Repository
             return respuesta;
         }
 
+        public int Eliminar (int id)
+        {
+            int respuesta = -1;
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "DELETE FROM Usuario WHERE Id = @Id;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("Id", id);
+
+                    conexion.Open();
+                    respuesta = comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
+            }
+            return respuesta;
+        }
+
         public int Modificar (Usuario entidad)
         {
             int respuesta = -1;
@@ -53,7 +72,6 @@ namespace pre_entrega.Repository
                     @"UPDATE Usuario
                     SET Nombre = @Nombre, Apellido = @Apellido, NombreUsuario = @NombreUsuario, Contraseña = @Contrasenia, Mail = @Mail
                     WHERE Id = @Id;";
-                conexion.Open();
 
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
@@ -65,7 +83,7 @@ namespace pre_entrega.Repository
                     comando.Parameters.AddWithValue("Mail", entidad.Mail);
                     
                     conexion.Open();
-                    comando.ExecuteNonQuery();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
                     conexion.Close();
                 }
             }
@@ -112,7 +130,6 @@ namespace pre_entrega.Repository
                 string consulta = "SELECT * FROM Usuario WHERE NombreUsuario = @NombreUsuario;";
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    // Otra manera de resolver la carga de parámetros.
                     comando.Parameters.Add("NombreUsuario", SqlDbType.Char).Value = nombreUsuario;
                     conexion.Open();
                     var lector = comando.ExecuteReader();
@@ -136,53 +153,37 @@ namespace pre_entrega.Repository
 
         public Usuario IniciarSesion (string nombreUsuario, string contrasenia)
         {
-            Usuario usuario = new Usuario();
+            Usuario usuario = null;
+
+            
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametroNombre = new SqlParameter()
-                {
-                    ParameterName = "NombreUsuario",
-                    SqlDbType = SqlDbType.Char,
-                    Value = nombreUsuario,
-                };
-
-                var parametroContrasenia = new SqlParameter()
-                {
-                    ParameterName = "Contraseña",
-                    SqlDbType = SqlDbType.Char,
-                    Value = contrasenia,
-                };
-
                 string consulta =
                     @"SELECT *
                     FROM Usuario
-                    WHERE NombreUsuario = @nombreUsuario AND Contraseña = @contraseña;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametroNombre);
-                comando.Parameters.Add(parametroContrasenia);
-                using (SqlDataReader dr = comando.ExecuteReader())
+                    WHERE NombreUsuario = @NombreUsuario AND Contraseña = @Contrasenia;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    if (dr.HasRows)
+                    comando.Parameters.AddWithValue("NombreUsuario", nombreUsuario);
+                    comando.Parameters.AddWithValue("Contrasenia", contrasenia);
+
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        usuario = new Usuario
                         {
-                            Usuario auxiliar = new Usuario()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Nombre = dr.GetString(1),
-                                Apellido = dr.GetString(2),
-                                NombreUsuario = dr.GetString(3),
-                                Contrasenia = dr.GetString(4),
-                                Mail = dr.GetString(5),
-                            };
-                            usuario = auxiliar;
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Nombre = lector.GetString(1),
+                            Apellido = lector.GetString(2),
+                            NombreUsuario = lector.GetString(3),
+                            Contrasenia = lector.GetString(4),
+                            Mail = lector.GetString(5),
+                        };
                     }
+                    conexion.Close();
                 }
-                conexion.Close();
             }
             return usuario;
         }

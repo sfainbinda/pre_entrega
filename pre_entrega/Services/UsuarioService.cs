@@ -12,24 +12,55 @@ namespace pre_entrega.Services
             repositorio = new UsuarioRepository();
         }
 
+        public int Eliminar (int id)
+        {
+            try
+            {
+                return repositorio.Eliminar(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public int Guardar (Usuario entidad)
         {
             try
             {
-                if (entidad.Id == 0)
+                Usuario existe = repositorio.ObtenerPorNombreUsuario(entidad.NombreUsuario);
+                if (existe == null || existe.Id == entidad.Id)
                 {
-                    return repositorio.Crear(entidad);
-                }
-                else
+                    if (entidad.Id == 0)
+                    {
+                        return repositorio.Crear(entidad);
+                    }
+                    else
+                    {
+                        return repositorio.Modificar(entidad);
+                    }
+                } else
                 {
-                    return repositorio.Modificar(entidad);
+                    throw new Exception("El nombre de usuario ya existe.");
                 }
             }
             catch (Exception)
             {
                 throw;
             }
-        } 
+        }
+
+        public Usuario IniciarSesion(string nombreUsuario, string contrasenia)
+        {
+            try
+            {
+                return repositorio.IniciarSesion(nombreUsuario, contrasenia);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         public Usuario ObtenerPorId (int id)
         {
@@ -48,18 +79,6 @@ namespace pre_entrega.Services
             try
             {
                 return repositorio.ObtenerPorNombreUsuario(nombreUsuario);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public Usuario IniciarSesion(string nombreUsuario, string contrasenia)
-        {
-            try
-            {
-                return repositorio.IniciarSesion(nombreUsuario, contrasenia);
             }
             catch (Exception)
             {

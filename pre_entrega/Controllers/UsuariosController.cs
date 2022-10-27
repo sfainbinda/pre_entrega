@@ -15,12 +15,43 @@ namespace pre_entrega.Controllers
             servicio = new UsuarioService();
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult Eliminar (int id)
+        {
+            try
+            {
+                var usuario = servicio.ObtenerPorId(id);
+                if (usuario == null) return NotFound();
+                servicio.Eliminar(id);
+                return Ok(usuario);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<Usuario> ObtenerPorId(int id)
         {
             try
             {
                 var usuario = servicio.ObtenerPorId(id);
+                if (usuario != null) return usuario;
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("[controller]/usuario/{nombreUsuario}")]
+        public ActionResult<Usuario> ObtenerPorNombreUsuario(string nombreUsuario)
+        {
+            try
+            {
+                var usuario = servicio.ObtenerPorNombreUsuario(nombreUsuario);
                 if (usuario != null) return usuario;
                 return NotFound();
             }
@@ -45,32 +76,6 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpPut]
-        public ActionResult<int> Modificar([FromBody] Usuario entidad)
-        {
-            try
-            {
-                return servicio.Guardar(entidad);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [HttpGet]
-        public ActionResult<Usuario> ObtenerUsuario([FromBody] string nombreUsuario)
-        {
-            try
-            {
-                return servicio.ObtenerPorNombreUsuario(nombreUsuario);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         [HttpPost("iniciar-sesion")]
         public ActionResult<Usuario> IniciarSesion(string nombreUsuario, string contrasenia)
         {
@@ -83,5 +88,19 @@ namespace pre_entrega.Controllers
                 throw;
             }
         }
+
+        [HttpPut]
+        public ActionResult<Usuario> Modificar([FromBody] Usuario entidad)
+        {
+            try
+            {
+                servicio.Guardar(entidad);
+                return servicio.ObtenerPorId(entidad.Id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }   
     }
 }

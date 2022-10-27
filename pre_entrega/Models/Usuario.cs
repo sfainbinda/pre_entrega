@@ -6,11 +6,17 @@ namespace pre_entrega.Models
     public class Usuario
     {
         #region Statements
+        [Required]
         private int _id;
+        [Required]
         private string _nombre;
+        [Required]
         private string _apellido;
+        [Required]
         private string _nombreUsuario;
+        [Required, DataType(DataType.Password)]
         private string _contrasenia;
+        [Required, EmailAddress]
         private string _mail;
         #endregion
 
@@ -24,15 +30,7 @@ namespace pre_entrega.Models
         #endregion
 
         #region Constructors
-        public Usuario()
-        {
-            Id = 0;
-            Nombre = string.Empty;
-            Apellido = string.Empty;
-            NombreUsuario = string.Empty;
-            Contrasenia = string.Empty;
-            Mail = string.Empty;
-        }
+        public Usuario() { }
 
         public Usuario(int id, string nombre, string apellido, string nombreUsuario, string contrasenia, string mail)
         {
