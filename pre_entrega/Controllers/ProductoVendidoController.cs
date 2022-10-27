@@ -16,12 +16,40 @@ namespace pre_entrega.Controllers
             servicio = new ProductoVendidoService();
         }
 
-        [HttpGet]
-        public ActionResult<List<ProductoVendido>> ObtenerProductosVendidos([FromBody] int idUsuario)
+        [HttpGet("{id}")]
+        public ActionResult<ProductoVendido> ObtenerPorId(int id)
         {
             try
             {
-                return servicio.ObtenerPorUsuarioId(idUsuario);
+                var productoVendido = servicio.ObtenerPorId(id);
+                if (productoVendido != null) return productoVendido;
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("[controller]/producto/{id}")]
+        public ActionResult<ProductoVendido> ObtenerPorProductoId(int id)
+        {
+            try
+            {
+                return Ok(servicio.ObtenerPorProductoId(id));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("[controller]/venta/{id}")]
+        public ActionResult<ProductoVendido> ObtenerPorVentaId(int id)
+        {
+            try
+            {
+                return Ok(servicio.ObtenerPorVentaId(id));
             }
             catch (Exception)
             {

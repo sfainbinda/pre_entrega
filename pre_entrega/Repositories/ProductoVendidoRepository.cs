@@ -14,117 +14,116 @@ namespace pre_entrega.Repositories
             gestorDeConexion = new GestorDeConexion();
         }
 
-        public bool EliminarPorProductoId (int idProducto)
+        public int Crear (ProductoVendido entidad)
         {
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-
-                var id = new SqlParameter()
-                {
-                    ParameterName = "IdProducto",
-                    SqlDbType = SqlDbType.Int,
-                    Value = idProducto,
-                };
-
                 string consulta =
-                    @"DELETE FROM ProductoVendido
-                    WHERE IdProducto = @Id";
+                    @"INSERT INTO ProductoVendido
+                    VALUES (@Stock, @IdProducto, @IdVenta)
+                    SELECT SCOPE_IDENTITY();";
 
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(id);
-                comando.ExecuteNonQuery();
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("Stock", entidad.Stock);
+                    comando.Parameters.AddWithValue("IdProducto", entidad.IdProducto);
+                    comando.Parameters.AddWithValue("IdVenta", entidad.IdVenta);
 
-                conexion.Close();
+                    conexion.Open();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    entidad.Id = respuesta;
+                    conexion.Close();
+                }
             }
-            return true;
+            return respuesta;
         }
 
-        public List<ProductoVendido> ObtenerPorProductoId(int idProducto)
+        public ProductoVendido ObtenerPorId (int id)
         {
-            List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
+            ProductoVendido productoVendido = null;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM ProductoVendido WHERE Id = @Id;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "IdProducto",
-                    SqlDbType = SqlDbType.Int,
-                    Value = idProducto,
-                };
-
-                string consulta =
-                    @"SELECT 
-                    *
-                    FROM ProductoVendido
-                    WHERE IdProducto = @IdProducto";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    comando.Parameters.Add("Id", SqlDbType.Int).Value = id;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        productoVendido = new ProductoVendido
                         {
-                            ProductoVendido productoVendido = new ProductoVendido() 
-                            {
-                                Id = (int) dr.GetInt64(0),
-                                Stock = (int)dr.GetInt32(1),
-                                IdProducto = (int)dr.GetInt64(2),
-                                IdVenta = (int) dr.GetInt64(3),
-                            };
-                            productosVendidos.Add(productoVendido);
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Stock = (int)lector.GetInt32(1),
+                            IdProducto = (int)lector.GetInt64(2),
+                            IdVenta = (int)lector.GetInt64(3),
+                        };
                     }
+                    conexion.Close();
                 }
-                conexion.Close();
+            }
+            return productoVendido;
+        }
+
+        public List<ProductoVendido> ObtenerPorProductoId (int idProducto)
+        {
+            List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
+
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "SELECT * FROM ProductoVendido WHERE IdProducto = @IdProducto;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.Add("IdProducto", SqlDbType.Int).Value = idProducto;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
+                    {
+                        ProductoVendido productoVendido = new ProductoVendido
+                        {
+                            Id = (int)lector.GetInt64(0),
+                            Stock = (int)lector.GetInt32(1),
+                            IdProducto = (int)lector.GetInt64(2),
+                            IdVenta = (int)lector.GetInt64(3),
+                        };
+                        productosVendidos.Add(productoVendido);
+                    }
+                    conexion.Close();
+                }
             }
             return productosVendidos;
         }
 
-        public List<ProductoVendido> ObtenerPorVentaId(int idVenta)
+        public List<ProductoVendido> ObtenerPorVentaId (int idVenta)
         {
             List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
+
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM ProductoVendido WHERE IdVenta = @IdVenta;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "IdVenta",
-                    SqlDbType = SqlDbType.Int,
-                    Value = idVenta,
-                };
-
-                string consulta =
-                    @"SELECT 
-                    *
-                    FROM ProductoVendido
-                    WHERE IdVenta = @IdVenta";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    comando.Parameters.Add("IdVenta", SqlDbType.Int).Value = idVenta;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        ProductoVendido productoVendido = new ProductoVendido
                         {
-                            ProductoVendido productoVendido = new ProductoVendido()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Stock = (int)dr.GetInt32(1),
-                                IdProducto = (int)dr.GetInt64(2),
-                                IdVenta = (int)dr.GetInt64(3),
-                            };
-                            productosVendidos.Add(productoVendido);
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Stock = (int)lector.GetInt32(1),
+                            IdProducto = (int)lector.GetInt64(2),
+                            IdVenta = (int)lector.GetInt64(3),
+                        };
+                        productosVendidos.Add(productoVendido);
                     }
+                    conexion.Close();
                 }
-                conexion.Close();
             }
             return productosVendidos;
         }

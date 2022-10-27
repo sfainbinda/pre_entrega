@@ -1,24 +1,24 @@
 ﻿using pre_entrega.Models;
 using pre_entrega.Repositories;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace pre_entrega.Services
 {
     public class ProductoVendidoService
     {
         private readonly ProductoVendidoRepository repositorio;
-        private readonly ProductoService productoServicio;
 
         public ProductoVendidoService()
         {
             repositorio = new ProductoVendidoRepository();
-            productoServicio = new ProductoService();
         }
 
-        public bool EliminarPorProductoId (int idProducto)
+        public int Guardar (ProductoVendido entidad)
         {
             try
             {
-                return repositorio.EliminarPorProductoId(idProducto);
+                return repositorio.Crear(entidad);
             }
             catch (Exception)
             {
@@ -26,22 +26,23 @@ namespace pre_entrega.Services
             }
         }
 
-        public List<ProductoVendido> ObtenerPorUsuarioId(int idUsuario)
+        public ProductoVendido ObtenerPorId(int id)
         {
             try
             {
-                List<ProductoVendido> productosVendidos = new List<ProductoVendido>();
-                List<Producto> productos = productoServicio.ObtenerPorUsuarioId(idUsuario);
-                foreach(var producto in productos)
-                {
-                    List<ProductoVendido> encontrados = repositorio.ObtenerPorProductoId(producto.Id);
-                    foreach (var encontrado in encontrados)
-                    {
-                        encontrado.Producto = producto;
-                        productosVendidos.Add(encontrado);
-                    }
-                }
-                return productosVendidos;
+                return repositorio.ObtenerPorId(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<ProductoVendido> ObtenerPorProductoId(int idProducto)
+        {
+            try
+            {
+                return repositorio.ObtenerPorProductoId(idProducto);
             }
             catch (Exception)
             {
@@ -53,12 +54,7 @@ namespace pre_entrega.Services
         {
             try
             {
-                List<ProductoVendido> productosVendidos = repositorio.ObtenerPorVentaId(idVenta);
-                foreach (var productoVendido in productosVendidos)
-                {
-                    productoVendido.Producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
-                }
-                return productosVendidos;
+                return repositorio.ObtenerPorVentaId(idVenta);
             }
             catch (Exception)
             {
