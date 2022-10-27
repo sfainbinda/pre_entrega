@@ -44,6 +44,21 @@ namespace pre_entrega.Repositories
         {
             int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
+
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "DELETE FROM ProductoVendido WHERE IdVenta = @IdVenta;";
+
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("IdVenta", id);
+
+                    conexion.Open();
+                    respuesta = comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
+            }
+
             using (SqlConnection conexion = new SqlConnection(cs))
             {
                 string consulta = "DELETE FROM Venta WHERE Id = @Id;";
@@ -78,7 +93,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
 
                     conexion.Open();
-                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    respuesta = comando.ExecuteNonQuery();
                     conexion.Close();
                 }
             }
@@ -154,7 +169,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.Add("IdUsuario", SqlDbType.Int).Value = idUsuario;
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         Venta venta = new Venta()
                         {
@@ -169,7 +184,5 @@ namespace pre_entrega.Repositories
             }
             return ventas;
         }
-
-
     }
 }

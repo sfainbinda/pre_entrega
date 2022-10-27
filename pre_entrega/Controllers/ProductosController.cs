@@ -31,7 +31,7 @@ namespace pre_entrega.Controllers
             try
             {
                 var producto = servicio.ObtenerPorId(id);
-                if (producto != null) return producto;
+                if (producto != null) return Ok(producto);
                 return NotFound();
             }
             catch (Exception)
@@ -41,12 +41,12 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet("usuario/{id}")]
-        public ActionResult<List<Producto>> ObtenerPorIdUsuario (int idUsuario)
+        public ActionResult<List<Producto>> ObtenerPorIdUsuario (int id)
         {
             try
             {
-                var producto = servicio.ObtenerPorUsuarioId(idUsuario);
-                if (producto != null) return producto;
+                var producto = servicio.ObtenerPorUsuarioId(id);
+                if (producto != null) return Ok(producto);
                 return NotFound();
             }
             catch (Exception)

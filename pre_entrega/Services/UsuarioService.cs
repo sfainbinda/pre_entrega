@@ -1,4 +1,5 @@
 ﻿using pre_entrega.Models;
+using pre_entrega.Repositories;
 using pre_entrega.Repository;
 
 namespace pre_entrega.Services
@@ -6,16 +7,32 @@ namespace pre_entrega.Services
     public class UsuarioService
     {
         private readonly UsuarioRepository repositorio;
+        private readonly ProductoRepository productoRepositorio;
+        private readonly VentaRepository ventaRepositorio;
 
         public UsuarioService()
         {
             repositorio = new UsuarioRepository();
+            productoRepositorio = new ProductoRepository();
+            ventaRepositorio = new VentaRepository();
         }
 
         public int Eliminar (int id)
         {
             try
             {
+                var productos = productoRepositorio.ObtenerPorUsuarioId(id);
+                foreach (var producto in productos)
+                {
+                    productoRepositorio.Eliminar(producto.Id);
+                }
+
+                var ventas = ventaRepositorio.ObtenerPorUsuarioId(id);
+                foreach (var venta in ventas)
+                {
+                    ventaRepositorio.Eliminar(venta.Id);
+                }
+
                 return repositorio.Eliminar(id);
             }
             catch (Exception)

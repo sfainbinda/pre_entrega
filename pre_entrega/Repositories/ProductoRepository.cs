@@ -24,7 +24,8 @@ namespace pre_entrega.Repositories
                     @"INSERT INTO Producto
                     (Descripciones, Costo, PrecioVenta, Stock, IdUsuario)
                     VALUES
-                    (@Descripciones, @Costo, @PrecioVenta, @Stock, @IdUsuario)";
+                    (@Descripciones, @Costo, @PrecioVenta, @Stock, @IdUsuario)
+                    SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
@@ -36,6 +37,7 @@ namespace pre_entrega.Repositories
 
                     conexion.Open();
                     respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    entidad.Id = respuesta;
                     conexion.Close();
                 }
                 
@@ -87,7 +89,7 @@ namespace pre_entrega.Repositories
                 string consulta =
                     @"UPDATE Producto
                     SET Descripciones = @Descripciones, Costo = @Costo, PrecioVenta = @PrecioVenta, Stock = @Stock, IdUsuario = @IdUsuario
-                    WHERE Id = @Id";
+                    WHERE Id = @Id;";
 
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
@@ -99,7 +101,7 @@ namespace pre_entrega.Repositories
                     comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
 
                     conexion.Open();
-                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    respuesta = comando.ExecuteNonQuery();
                     conexion.Close();
                 }
             }

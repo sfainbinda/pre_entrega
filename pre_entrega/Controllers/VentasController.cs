@@ -31,7 +31,7 @@ namespace pre_entrega.Controllers
             try
             {
                 var venta = servicio.ObtenerPorId(id);
-                if (venta != null) return venta;
+                if (venta != null) return Ok(venta);
                 return NotFound();
             }
             catch (Exception)
@@ -40,13 +40,13 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("/usuario/{idUsuario}")]
-        public ActionResult<List<Venta>> ObtenerPorIdUsuario (int idUsuario)
+        [HttpGet("/usuario/{id}")]
+        public ActionResult<List<Venta>> ObtenerPorIdUsuario (int id)
         {
             try
             {
-                var venta = servicio.ObtenerPorUsuarioId(idUsuario);
-                if (venta != null) return venta;
+                var venta = servicio.ObtenerPorUsuarioId(id);
+                if (venta != null) return Ok(venta);
                 return NotFound();
             }
             catch (Exception)

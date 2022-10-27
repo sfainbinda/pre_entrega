@@ -37,7 +37,7 @@ namespace pre_entrega.Controllers
             try
             {
                 var usuario = servicio.ObtenerPorId(id);
-                if (usuario != null) return usuario;
+                if (usuario != null) return Ok(usuario);
                 return NotFound();
             }
             catch (Exception)
@@ -46,13 +46,13 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("[controller]/usuario/{nombreUsuario}")]
+        [HttpGet("usuario/{nombreUsuario}")]
         public ActionResult<Usuario> ObtenerPorNombreUsuario(string nombreUsuario)
         {
             try
             {
                 var usuario = servicio.ObtenerPorNombreUsuario(nombreUsuario);
-                if (usuario != null) return usuario;
+                if (usuario != null) return Ok(usuario);
                 return NotFound();
             }
             catch (Exception)
@@ -67,7 +67,7 @@ namespace pre_entrega.Controllers
             try
             {
                 servicio.Guardar(entidad);
-                return servicio.ObtenerPorId(entidad.Id);
+                return Ok(servicio.ObtenerPorId(entidad.Id));
             }
 
             catch (Exception)
@@ -81,7 +81,7 @@ namespace pre_entrega.Controllers
         {
             try
             {
-                return servicio.IniciarSesion(nombreUsuario, contrasenia);
+                return Ok(servicio.IniciarSesion(nombreUsuario, contrasenia));
             }
             catch (Exception)
             {
@@ -95,7 +95,7 @@ namespace pre_entrega.Controllers
             try
             {
                 servicio.Guardar(entidad);
-                return servicio.ObtenerPorId(entidad.Id);
+                return Ok(servicio.ObtenerPorId(entidad.Id));
             }
             catch (Exception)
             {

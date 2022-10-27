@@ -22,7 +22,7 @@ namespace pre_entrega.Controllers
             try
             {
                 var productoVendido = servicio.ObtenerPorId(id);
-                if (productoVendido != null) return productoVendido;
+                if (productoVendido != null) return Ok(productoVendido);
                 return NotFound();
             }
             catch (Exception)

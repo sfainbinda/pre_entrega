@@ -8,7 +8,7 @@ namespace pre_entrega.Repository
     public class UsuarioRepository
     {
         private readonly GestorDeConexion gestorDeConexion;
-
+        
         public UsuarioRepository()
         {
             gestorDeConexion = new GestorDeConexion();
@@ -18,6 +18,7 @@ namespace pre_entrega.Repository
         {
             int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
+            
             using (SqlConnection conexion = new SqlConnection(cs))
             {
                 string consulta =
@@ -47,6 +48,7 @@ namespace pre_entrega.Repository
         {
             int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
+
             using (SqlConnection conexion = new SqlConnection(cs))
             {
                 string consulta = "DELETE FROM Usuario WHERE Id = @Id;";
@@ -83,7 +85,7 @@ namespace pre_entrega.Repository
                     comando.Parameters.AddWithValue("Mail", entidad.Mail);
                     
                     conexion.Open();
-                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    respuesta = comando.ExecuteNonQuery();
                     conexion.Close();
                 }
             }
