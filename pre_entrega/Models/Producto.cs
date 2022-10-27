@@ -14,11 +14,16 @@ namespace pre_entrega.Models
         #endregion
 
         #region Properties
+        [Required]
         public int Id { get { return _id; } set { _id = value; } }
+        [Required]
         public string Descripciones { get { return _descripciones; } set { _descripciones = value; } }
         public decimal Costo { get { return _costo; } set { _costo = value; } }
+        [Required]
         public decimal PrecioVenta { get { return _precioVenta; } set { _precioVenta = value; } }
+        [Required]
         public int Stock { get { return _stock; } set { _stock = value; } }
+        [Required]
         public int IdUsuario { get { return _idUsuario; } set { _idUsuario = value; } }
         #endregion
 

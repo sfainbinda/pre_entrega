@@ -15,12 +15,24 @@ namespace pre_entrega.Services
             productoVendidoServicio = new ProductoVendidoService();
         }
 
-        public string Guardar (Producto producto)
+        public int Eliminar (int id)
+        {
+            try
+            {
+                return repositorio.Eliminar(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public int Guardar (Producto producto)
         {
             try
             {
                 if (producto.Id == 0) {
-                    return repositorio.Agregar(producto);
+                    return repositorio.Crear(producto);
                 }
                 else
                 {
@@ -32,19 +44,6 @@ namespace pre_entrega.Services
                 throw;
             } 
         }
-
-        public List<Producto> ObtenerTodos ()
-        {
-            try
-            {
-                return repositorio.ObtenerTodos();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
 
         public Producto ObtenerPorId(int id)
         {
@@ -70,12 +69,11 @@ namespace pre_entrega.Services
             }
         }
 
-        public string Eliminar (int id)
+        public List<Producto> ObtenerTodos ()
         {
             try
             {
-                bool ventasEliminadas = productoVendidoServicio.EliminarPorProductoId(id);
-                return repositorio.Eliminar(id);
+                return repositorio.ObtenerTodos();
             }
             catch (Exception)
             {

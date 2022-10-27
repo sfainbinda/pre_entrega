@@ -14,298 +14,175 @@ namespace pre_entrega.Repositories
             gestorDeConexion = new GestorDeConexion();
         }
 
-       /// <summary>
-       /// Crear producto
-       /// Recibe un producto como parámetro, debe crearlo, puede ser void, pero valida los datos obligatorios.
-       /// </summary>
-       /// <returns></returns>
-        public string Agregar(Producto producto)
+        public int Crear (Producto entidad)
         {
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-
                 string consulta =
                     @"INSERT INTO Producto
                     (Descripciones, Costo, PrecioVenta, Stock, IdUsuario)
                     VALUES
                     (@Descripciones, @Costo, @PrecioVenta, @Stock, @IdUsuario)";
 
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-
-                var descripciones = new SqlParameter()
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Descripciones",
-                    SqlDbType = SqlDbType.Char,
-                    Value = producto.Descripciones,
-                };
+                    comando.Parameters.AddWithValue("Descripciones", entidad.Descripciones);
+                    comando.Parameters.AddWithValue("Costo", entidad.Costo);
+                    comando.Parameters.AddWithValue("PrecioVenta", entidad.PrecioVenta);
+                    comando.Parameters.AddWithValue("Stock", entidad.Stock);
+                    comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
 
-                var costo = new SqlParameter()
-                {
-                    ParameterName = "Costo",
-                    SqlDbType = SqlDbType.Decimal,
-                    Value = producto.Costo,
-                };
-
-                var precioVenta = new SqlParameter()
-                {
-                    ParameterName = "PrecioVenta",
-                    SqlDbType = SqlDbType.Decimal,
-                    Value = producto.PrecioVenta,
-                };
-
-                var stock = new SqlParameter()
-                {
-                    ParameterName = "Stock",
-                    SqlDbType = SqlDbType.Int,
-                    Value = producto.Stock,
-                };
-
-                var idUsuario = new SqlParameter()
-                {
-                    ParameterName = "IdUsuario",
-                    SqlDbType = SqlDbType.Int,
-                    Value = producto.IdUsuario,
-                };
-
-
-                comando.Parameters.Add(descripciones);
-                comando.Parameters.Add(costo);
-                comando.Parameters.Add(precioVenta);
-                comando.Parameters.Add(stock);
-                comando.Parameters.Add(idUsuario);
-
-                comando.ExecuteNonQuery();
-                conexion.Close();
+                    conexion.Open();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
+                }
+                
             }
-            return "Producto creado.";
+            return respuesta;
         }
 
-        public string Modificar(Producto producto)
+        public int Eliminar (int id)
         {
+            int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
+                string consulta = "DELETE FROM Producto WHERE Id = @Id;";
 
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("Id", id);
+
+                    conexion.Open();
+                    respuesta = comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
+            }
+            return respuesta;
+        }
+
+        public int Modificar(Producto entidad)
+        {
+            int respuesta = -1;
+            string cs = gestorDeConexion.establecerConexion();
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
                 string consulta =
                     @"UPDATE Producto
                     SET Descripciones = @Descripciones, Costo = @Costo, PrecioVenta = @PrecioVenta, Stock = @Stock, IdUsuario = @IdUsuario
                     WHERE Id = @Id";
 
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-
-                var id = new SqlParameter()
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = producto.Id,
-                };
+                    comando.Parameters.AddWithValue("Id", entidad.Id);
+                    comando.Parameters.AddWithValue("Descripciones", entidad.Descripciones);
+                    comando.Parameters.AddWithValue("Costo", entidad.Costo);
+                    comando.Parameters.AddWithValue("PrecioVenta", entidad.PrecioVenta);
+                    comando.Parameters.AddWithValue("Stock", entidad.Stock);
+                    comando.Parameters.AddWithValue("IdUsuario", entidad.IdUsuario);
 
-                var descripciones = new SqlParameter()
-                {
-                    ParameterName = "Descripciones",
-                    SqlDbType = SqlDbType.Char,
-                    Value = producto.Descripciones,
-                };
-
-                var costo = new SqlParameter()
-                {
-                    ParameterName = "Costo",
-                    SqlDbType = SqlDbType.Decimal,
-                    Value = producto.Costo,
-                };
-
-                var precioVenta = new SqlParameter()
-                {
-                    ParameterName = "PrecioVenta",
-                    SqlDbType = SqlDbType.Decimal,
-                    Value = producto.PrecioVenta,
-                };
-
-                var stock = new SqlParameter()
-                {
-                    ParameterName = "Stock",
-                    SqlDbType = SqlDbType.Int,
-                    Value = producto.Stock,
-                };
-
-                var idUsuario = new SqlParameter()
-                {
-                    ParameterName = "IdUsuario",
-                    SqlDbType = SqlDbType.Int,
-                    Value = producto.IdUsuario,
-                };
-
-
-                comando.Parameters.Add(id);
-                comando.Parameters.Add(descripciones);
-                comando.Parameters.Add(costo);
-                comando.Parameters.Add(precioVenta);
-                comando.Parameters.Add(stock);
-                comando.Parameters.Add(idUsuario);
-
-                comando.ExecuteNonQuery();
-                conexion.Close();
-            }
-            return "Producto modificado.";
-        }
-
-        public List<Producto> ObtenerTodos ()
-        {
-            List<Producto> productos = new List<Producto>();
-            string cs = gestorDeConexion.establecerConexion();
-            using (SqlConnection conexion = new SqlConnection(cs))
-            {
-                conexion.Open();
-                
-                string consulta = "SELECT * FROM Producto;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
-                    {
-                        while (dr.Read())
-                        {
-                            Producto producto = new Producto()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Descripciones = dr.GetString(1),
-                                Costo = dr.GetDecimal(2),
-                                PrecioVenta = dr.GetDecimal(3),
-                                Stock = dr.GetInt32(4),
-                                IdUsuario = (int)dr.GetInt64(5),
-                            };
-                            productos.Add(producto);
-                        }
-                    }
+                    conexion.Open();
+                    respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    conexion.Close();
                 }
             }
-            return productos;
+            return respuesta;
         }
 
         public Producto ObtenerPorId(int id)
         {
-            Producto producto = new Producto();
+            Producto producto = null;
+
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM Producto WHERE Id = @Id;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = id,
-                };
-
-                string consulta =
-                    @"SELECT * 
-                    FROM Producto 
-                    WHERE Id = @Id;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    comando.Parameters.Add("Id", SqlDbType.Int).Value = id;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        producto = new Producto()
                         {
-                            Producto encontrado = new Producto()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Descripciones = dr.GetString(1),
-                                Costo = dr.GetDecimal(2),
-                                PrecioVenta = dr.GetDecimal(3),
-                                Stock = dr.GetInt32(4),
-                                IdUsuario = (int)dr.GetInt64(5),
-                            };
-                            producto = encontrado;
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Descripciones = lector.GetString(1),
+                            Costo = lector.GetDecimal(2),
+                            PrecioVenta = lector.GetDecimal(3),
+                            Stock = lector.GetInt32(4),
+                            IdUsuario = (int)lector.GetInt64(5),
+                        };
                     }
+                    conexion.Close();
                 }
             }
             return producto;
         }
 
-        public List<Producto> ObtenerPorUsuarioId(int idUsuario)
+        public List<Producto> ObtenerTodos ()
         {
             List<Producto> productos = new List<Producto>();
+
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-                var parametro = new SqlParameter()
+                string consulta = "SELECT * FROM Producto;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "IdUsuario",
-                    SqlDbType = SqlDbType.Int,
-                    Value = idUsuario,
-                };
-
-                string consulta =
-                    @"SELECT * 
-                    FROM Producto 
-                    WHERE IdUsuario = @IdUsuario;";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(parametro);
-                using (SqlDataReader dr = comando.ExecuteReader())
-                {
-                    if (dr.HasRows)
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
                     {
-                        while (dr.Read())
+                        Producto producto = new Producto()
                         {
-                            Producto producto = new Producto()
-                            {
-                                Id = (int)dr.GetInt64(0),
-                                Descripciones = dr.GetString(1),
-                                Costo = dr.GetDecimal(2),
-                                PrecioVenta = dr.GetDecimal(3),
-                                Stock = dr.GetInt32(4),
-                                IdUsuario = (int)dr.GetInt64(5),
-                            };
-                            productos.Add(producto);
-                        }
+                            Id = (int)lector.GetInt64(0),
+                            Descripciones = lector.GetString(1),
+                            Costo = lector.GetDecimal(2),
+                            PrecioVenta = lector.GetDecimal(3),
+                            Stock = lector.GetInt32(4),
+                            IdUsuario = (int)lector.GetInt64(5),
+                        };
+                        productos.Add(producto);
                     }
+                    conexion.Close();
                 }
             }
             return productos;
         }
 
-        /// <summary>
-        /// Eliminar producto
-        /// Recibe un id de producto a eliminar y debe eliminarlo de la base de datos (eliminar antes
-        /// sus productos vendidos también, sino no lo podrá hacer).
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public string Eliminar (int id)
+        public List<Producto> ObtenerPorUsuarioId(int idUsuario)
         {
+            List<Producto> productos = new List<Producto>();
+
             string cs = gestorDeConexion.establecerConexion();
             using (SqlConnection conexion = new SqlConnection(cs))
             {
-                conexion.Open();
-
-                var idProducto = new SqlParameter()
+                string consulta = "SELECT * FROM Producto WHERE IdUsuario = @IdUsuario;";
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
-                    ParameterName = "Id",
-                    SqlDbType = SqlDbType.Int,
-                    Value = id,
-                };
-
-                string consulta =
-                    @"DELETE FROM ProductoVendido
-                    WHERE IdProducto = @Id";
-
-                SqlCommand comando = new SqlCommand(consulta, conexion);
-                comando.Parameters.Add(idProducto);
-                comando.ExecuteNonQuery();
-
-                conexion.Close();
+                    comando.Parameters.Add("IdUsuario", SqlDbType.Int).Value = idUsuario;
+                    conexion.Open();
+                    var lector = comando.ExecuteReader();
+                    if (lector.Read())
+                    {
+                        Producto producto = new Producto()
+                        {
+                            Id = (int)lector.GetInt64(0),
+                            Descripciones = lector.GetString(1),
+                            Costo = lector.GetDecimal(2),
+                            PrecioVenta = lector.GetDecimal(3),
+                            Stock = lector.GetInt32(4),
+                            IdUsuario = (int)lector.GetInt64(5),
+                        };
+                        productos.Add(producto);
+                    }
+                    conexion.Close();
+                }
             }
-            return "Producto eliminado.";
+            return productos;
         }
     }
 }

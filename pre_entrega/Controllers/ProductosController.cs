@@ -16,25 +16,23 @@ namespace pre_entrega.Controllers
             servicio = new ProductoService();
         }
 
-        [HttpGet]
-        public ActionResult<List<Producto>> ObtenerTodos()
+        [HttpDelete("{id}")]
+        public ActionResult<string> Eliminar ([FromQuery] int id)
         {
-            try
-            {
-                return servicio.ObtenerTodos();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var producto = servicio.ObtenerPorId(id);
+            if (producto == null) return NotFound();
+            servicio.Eliminar(id);
+            return Ok(producto);
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public ActionResult<Producto> ObtenerPorId ([FromQuery] int id)
         {
             try
             {
-                return servicio.ObtenerPorId(id);
+                var producto = servicio.ObtenerPorId(id);
+                if (producto != null) return producto;
+                return NotFound();
             }
             catch (Exception)
             {
@@ -42,12 +40,27 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("idUsuario")]
-        public ActionResult<List<Producto>> ObtenerPorIdUsuario([FromQuery]int idUsuario)
+        [HttpGet("[controller]/usuario/{idUsuario}")]
+        public ActionResult<List<Producto>> ObtenerPorIdUsuario ([FromQuery] int idUsuario)
         {
             try
             {
-                return servicio.ObtenerPorUsuarioId(idUsuario);
+                var producto = servicio.ObtenerPorUsuarioId(idUsuario);
+                if (producto != null) return producto;
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<List<Producto>> ObtenerTodos ()
+        {
+            try
+            {
+                return Ok(servicio.ObtenerTodos());
             }
             catch (Exception)
             {
@@ -56,27 +69,17 @@ namespace pre_entrega.Controllers
         }
 
         [HttpPost]
-        public ActionResult<string> Agregar([FromBody] Producto producto)
+        public ActionResult<Producto> Crear ([FromBody] Producto entidad)
         {
-            bool valido = false;
-            if (ModelState.IsValid)
-            {
-                valido = true;
-            }
-
-            return Ok(servicio.Guardar(producto));
+            servicio.Guardar(entidad);
+            return Ok(servicio.ObtenerPorId(entidad.Id));
         }
 
         [HttpPut]
-        public ActionResult<string> Modificar([FromBody] Producto producto)
+        public ActionResult<Producto> Modificar ([FromBody] Producto entidad)
         {
-            return Ok(servicio.Guardar(producto));
-        }
-
-        [HttpDelete("id")]
-        public ActionResult<string> Eliminar([FromQuery] int id)
-        {
-            return Ok(servicio.Eliminar(id));
+            servicio.Guardar(entidad);
+            return Ok(servicio.ObtenerPorId(entidad.Id));
         }
     }
 }
