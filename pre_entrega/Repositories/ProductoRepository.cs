@@ -47,6 +47,21 @@ namespace pre_entrega.Repositories
         {
             int respuesta = -1;
             string cs = gestorDeConexion.establecerConexion();
+
+            using (SqlConnection conexion = new SqlConnection(cs))
+            {
+                string consulta = "DELETE FROM ProductoVendido WHERE IdProducto = @IdProducto;";
+
+                using (SqlCommand comando = new SqlCommand(consulta, conexion))
+                {
+                    comando.Parameters.AddWithValue("IdProducto", id);
+
+                    conexion.Open();
+                    respuesta = comando.ExecuteNonQuery();
+                    conexion.Close();
+                }
+            }
+
             using (SqlConnection conexion = new SqlConnection(cs))
             {
                 string consulta = "DELETE FROM Producto WHERE Id = @Id;";

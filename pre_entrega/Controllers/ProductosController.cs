@@ -17,7 +17,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<string> Eliminar ([FromQuery] int id)
+        public ActionResult<string> Eliminar (int id)
         {
             var producto = servicio.ObtenerPorId(id);
             if (producto == null) return NotFound();
@@ -26,7 +26,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Producto> ObtenerPorId ([FromQuery] int id)
+        public ActionResult<Producto> ObtenerPorId (int id)
         {
             try
             {
@@ -40,8 +40,8 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("[controller]/usuario/{idUsuario}")]
-        public ActionResult<List<Producto>> ObtenerPorIdUsuario ([FromQuery] int idUsuario)
+        [HttpGet("usuario/{id}")]
+        public ActionResult<List<Producto>> ObtenerPorIdUsuario (int idUsuario)
         {
             try
             {
