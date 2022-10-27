@@ -6,10 +6,13 @@ namespace pre_entrega.Services
     public class VentaService
     {
         private readonly VentaRepository repositorio;
-        
+        private readonly ProductoVendidoService productoVendidoServicio;
+        private readonly ProductoService productoServicio;
         public VentaService()
         {
             repositorio = new VentaRepository();
+            productoVendidoServicio = new ProductoVendidoService();
+            productoServicio = new ProductoService();
         }
 
         public int Eliminar(int id)
@@ -24,17 +27,35 @@ namespace pre_entrega.Services
             }
         }
 
-        public int Guardar(Venta venta)
+        public int Guardar(Venta entidad, List<ProductoVendido> productosVendidos)
         {
             try
             {
-                if (venta.Id == 0)
+                if (entidad.Id == 0 && productosVendidos != null)
                 {
-                    return repositorio.Crear(venta);
+                    var idVenta = repositorio.Crear(entidad);
+                    foreach (var productoVendido in productosVendidos)
+                    {
+                        productoVendido.IdVenta = idVenta;
+                        productoVendidoServicio.Guardar(productoVendido);
+
+                        var producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
+                        int diferencia = producto.Stock - productoVendido.Stock;
+                        if (diferencia < 0)
+                        {
+                            throw new Exception("Stock insuficiente.");
+                        }
+                        else
+                        {
+                            producto.Stock = diferencia;
+                            productoServicio.Guardar(producto);
+                        }
+                    }
+                    return idVenta;
                 }
                 else
                 {
-                    return repositorio.Modificar(venta);
+                    return repositorio.Modificar(entidad);
                 }
             }
             catch (Exception)
@@ -47,7 +68,15 @@ namespace pre_entrega.Services
         {
             try
             {
-                return repositorio.ObtenerPorId(id);
+                var venta = repositorio.ObtenerPorId(id);
+                var productosVendidos = productoVendidoServicio.ObtenerPorVentaId(venta.Id);
+                foreach (var productoVendido in productosVendidos)
+                {
+                    var producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
+                    productoVendido.Producto = producto;
+                }
+                venta.ProductosVendidos = productosVendidos;
+                return venta;
             }
             catch (Exception)
             {
@@ -59,7 +88,18 @@ namespace pre_entrega.Services
         {
             try
             {
-                return repositorio.ObtenerPorUsuarioId(idUsuario);
+                var ventas = repositorio.ObtenerPorUsuarioId(idUsuario);
+                foreach (var venta in ventas)
+                {
+                    var productosVendidos = productoVendidoServicio.ObtenerPorVentaId(venta.Id);
+                    foreach (var productoVendido in productosVendidos)
+                    {
+                        var producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
+                        productoVendido.Producto = producto;
+                    }
+                    venta.ProductosVendidos = productosVendidos;
+                }
+                return ventas;
             }
             catch (Exception)
             {
@@ -71,7 +111,18 @@ namespace pre_entrega.Services
         {
             try
             {
-                return repositorio.ObtenerTodos();
+                var ventas = repositorio.ObtenerTodos();
+                foreach (var venta in ventas)
+                {
+                    var productosVendidos = productoVendidoServicio.ObtenerPorVentaId(venta.Id);
+                    foreach (var productoVendido in productosVendidos)
+                    {
+                        var producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
+                        productoVendido.Producto = producto;
+                    }
+                    venta.ProductosVendidos = productosVendidos;
+                }
+                return ventas;
             }
             catch (Exception)
             {

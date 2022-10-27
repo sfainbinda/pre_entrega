@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace pre_entrega.Models
 {
@@ -20,6 +21,8 @@ namespace pre_entrega.Models
         public int IdProducto { get { return _idProducto; } set { _idProducto = value; } }
         [Required]
         public int IdVenta { get { return _idVenta; } set { _idVenta = value; } }
+
+        public Producto Producto { get; set; }
         #endregion
 
         #region Constructors

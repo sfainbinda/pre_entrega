@@ -17,7 +17,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<string> Eliminar([FromQuery] int id)
+        public ActionResult<string> Eliminar (int id)
         {
             var venta = servicio.ObtenerPorId(id);
             if (venta == null) return NotFound();
@@ -26,7 +26,7 @@ namespace pre_entrega.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Venta> ObtenerPorId([FromQuery] int id)
+        public ActionResult<Venta> ObtenerPorId (int id)
         {
             try
             {
@@ -40,8 +40,8 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("[controller]/usuario/{idUsuario}")]
-        public ActionResult<List<Venta>> ObtenerPorIdUsuario([FromQuery] int idUsuario)
+        [HttpGet("/usuario/{idUsuario}")]
+        public ActionResult<List<Venta>> ObtenerPorIdUsuario (int idUsuario)
         {
             try
             {
@@ -69,16 +69,20 @@ namespace pre_entrega.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Venta> Crear([FromBody] Venta entidad)
+        public ActionResult<Venta> Crear([FromBody] List<ProductoVendido> productosVendidos, int idUsuario)
         {
-            servicio.Guardar(entidad);
+            Venta entidad = new Venta();
+            entidad.IdUsuario = idUsuario;
+            entidad.Comentarios = ""; //Por consigna, no forma parte de los parámetros.
+
+            servicio.Guardar(entidad, productosVendidos);
             return Ok(servicio.ObtenerPorId(entidad.Id));
         }
 
         [HttpPut]
         public ActionResult<Venta> Modificar([FromBody] Venta entidad)
         {
-            servicio.Guardar(entidad);
+            servicio.Guardar(entidad, null);
             return Ok(servicio.ObtenerPorId(entidad.Id));
         }
     }

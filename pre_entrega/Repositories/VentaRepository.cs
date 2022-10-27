@@ -23,7 +23,8 @@ namespace pre_entrega.Repositories
                 string consulta =
                     @"INSERT INTO Venta
                     (Comentarios, IdUsuario)
-                    VALUES (@Comentarios, @IdUsuario);";
+                    VALUES (@Comentarios, @IdUsuario)
+                    SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comando = new SqlCommand(consulta, conexion))
                 {
@@ -32,6 +33,7 @@ namespace pre_entrega.Repositories
 
                     conexion.Open();
                     respuesta = Convert.ToInt32(comando.ExecuteScalar());
+                    entidad.Id = respuesta;
                     conexion.Close();
                 }
             }
@@ -123,7 +125,7 @@ namespace pre_entrega.Repositories
                 {
                     conexion.Open();
                     var lector = comando.ExecuteReader();
-                    if (lector.Read())
+                    while (lector.Read())
                     {
                         Venta venta = new Venta()
                         {
