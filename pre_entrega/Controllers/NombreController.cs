@@ -6,16 +6,16 @@ namespace pre_entrega.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NegocioController : Controller
+    public class NombreController : Controller
     {
 
         [HttpGet]
-        public ActionResult<string> Obtener ()
+        public string Obtener ()
         {
             try
             {
                 var negocio = new Negocio();
-                return Ok(negocio);
+                return negocio.Nombre;
             }
             catch (Exception)
             {

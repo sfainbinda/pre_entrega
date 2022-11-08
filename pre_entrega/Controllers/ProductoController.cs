@@ -7,45 +7,30 @@ namespace pre_entrega.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductosController : ControllerBase
+    public class ProductoController : ControllerBase
     {
         private readonly ProductoService servicio;
 
-        public ProductosController()
+        public ProductoController()
         {
             servicio = new ProductoService();
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<string> Eliminar (int id)
+        [HttpDelete("{idProducto}")]
+        public ActionResult<string> Eliminar (int idProducto)
         {
-            var producto = servicio.ObtenerPorId(id);
+            var producto = servicio.ObtenerPorId(idProducto);
             if (producto == null) return NotFound();
-            servicio.Eliminar(id);
+            servicio.Eliminar(idProducto);
             return Ok(producto);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Producto> ObtenerPorId (int id)
+        [HttpGet("{idUsuario}")]
+        public ActionResult<List<Producto>> ObtenerPorIdUsuario (int idUsuario)
         {
             try
             {
-                var producto = servicio.ObtenerPorId(id);
-                if (producto != null) return Ok(producto);
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [HttpGet("usuario/{id}")]
-        public ActionResult<List<Producto>> ObtenerPorIdUsuario (int id)
-        {
-            try
-            {
-                var producto = servicio.ObtenerPorUsuarioId(id);
+                var producto = servicio.ObtenerPorUsuarioId(idUsuario);
                 if (producto != null) return Ok(producto);
                 return NotFound();
             }

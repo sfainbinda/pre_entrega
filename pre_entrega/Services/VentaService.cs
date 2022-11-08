@@ -27,36 +27,39 @@ namespace pre_entrega.Services
             }
         }
 
-        public int Guardar(Venta entidad, List<ProductoVendido> productosVendidos)
+        public int Guardar(List<Producto> productos, int idUsuario)
         {
             try
             {
-                if (entidad.Id == 0 && productosVendidos != null)
-                {
-                    var idVenta = repositorio.Crear(entidad);
-                    foreach (var productoVendido in productosVendidos)
-                    {
-                        productoVendido.IdVenta = idVenta;
-                        productoVendidoServicio.Guardar(productoVendido);
+                Venta venta = new Venta();
+                venta.IdUsuario = idUsuario;
+                venta.Comentarios = "";
 
-                        var producto = productoServicio.ObtenerPorId(productoVendido.IdProducto);
-                        int diferencia = producto.Stock - productoVendido.Stock;
-                        if (diferencia < 0)
-                        {
-                            throw new Exception("Stock insuficiente.");
-                        }
-                        else
-                        {
-                            producto.Stock = diferencia;
-                            productoServicio.Guardar(producto);
-                        }
-                    }
-                    return idVenta;
-                }
-                else
+                venta.Id = repositorio.Crear(venta);
+
+                foreach (Producto producto in productos)
                 {
-                    return repositorio.Modificar(entidad);
+                    ProductoVendido productoVendido = new ProductoVendido
+                    {
+                        Stock = producto.Stock,
+                        IdProducto = producto.Id,
+                        IdVenta = venta.Id,
+                    };
+                    productoVendidoServicio.Guardar(productoVendido);
+
+                    var productoActualizado = productoServicio.ObtenerPorId(producto.Id);
+                    int diferencia = productoActualizado.Stock - producto.Stock;
+                    if (diferencia < 0)
+                    {
+                        throw new Exception("Stock insuficiente.");
+                    }
+                    else
+                    {
+                        productoActualizado.Stock = diferencia;
+                        productoServicio.Guardar(productoActualizado);
+                    }
                 }
+                return venta.Id;
             }
             catch (Exception)
             {

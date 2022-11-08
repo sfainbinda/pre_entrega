@@ -6,11 +6,11 @@ namespace pre_entrega.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuariosController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
         private readonly UsuarioService servicio;
 
-        public UsuariosController()
+        public UsuarioController()
         {
             servicio = new UsuarioService();
         }
@@ -31,22 +31,7 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Usuario> ObtenerPorId(int id)
-        {
-            try
-            {
-                var usuario = servicio.ObtenerPorId(id);
-                if (usuario != null) return Ok(usuario);
-                return NotFound();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [HttpGet("usuario/{nombreUsuario}")]
+        [HttpGet("{nombreUsuario}")]
         public ActionResult<Usuario> ObtenerPorNombreUsuario(string nombreUsuario)
         {
             try
@@ -76,12 +61,12 @@ namespace pre_entrega.Controllers
             }
         }
 
-        [HttpPost("iniciar-sesion")]
-        public ActionResult<Usuario> IniciarSesion(string nombreUsuario, string contrasenia)
+        [HttpGet("{nombreUsuario}/{contraseña}")]
+        public ActionResult<Usuario> IniciarSesion(string nombreUsuario, string contraseña)
         {
             try
             {
-                return Ok(servicio.IniciarSesion(nombreUsuario, contrasenia));
+                return Ok(servicio.IniciarSesion(nombreUsuario, contraseña));
             }
             catch (Exception)
             {
